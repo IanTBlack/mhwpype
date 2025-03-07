@@ -1,0 +1,13 @@
+aiohttp
+bottleneck
+fsspec
+jupyter
+ipykernel
+ipympl
+matplotlib
+netCDF4
+numpy
+pandas
+scipy
+statsmodels
+xarray
