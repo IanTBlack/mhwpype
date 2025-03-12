@@ -1,10 +1,11 @@
 # TODO
 - optimize ufuncs in grouped computations
+- add attributes to xarray objects so that provenance of processing is clear in redistributed netCDFs.
+- improve doc strings
+- submit to pypi
 
 # mhwpype 
 
-mhwpype is a re-worked version of the Python package mhw-detect. It is intended for use on multi-dimensional temperature datasets. This
-package will compute MHW time-series metrics for each cell (latitude, longitude, depth) in a gridded dataset. 
 
 
 
