@@ -1,0 +1,53 @@
+# Dimensions and Coordinates
+time:
+  description: 'Time of the associated data. '
+  encoding: 'seconds since 1900-01-01'
+
+depth:
+  dtype: 'float32'
+  standard_name: 'depth'
+  short_name: 'depth'
+  long_name: 'Depth'
+  units: 'meters'
+  units_abbreviations: 'm'
+  description: 'Depth of the associated data.'
+  positive_direction: 'down'
+  axis: 'Z'
+
+latitude:
+  dtype: 'float32'
+  standard_name: 'latitude'
+  short_name: 'latitude'
+  long_name: 'Latitude'
+  units: 'degrees_north'
+  units_abbreviation: 'N'
+  description: 'Latitude of the associated data.'
+  positive_direction: 'north'
+  axis: 'Y'
+  range: [-90, 90]
+
+longitude:
+  dtype: 'float32'
+  standard_name: 'longitude'
+  short_name: 'longitude'
+  long_name: 'Longitude'
+  units: 'degrees_east'
+  units_abbreviation: 'E'
+  description: 'Longitude of the associated data.'
+  positive_direction: 'east'
+  axis: 'X'
+  range: [-180, 180]
+
+
+#Variables
+heat_spike_mask:
+  dtype: 'int8'
+  description: 'A binary mask indicating if the temperature value oriented at the given dataset dimensions exceeds the given threshold. A value of 1 indicates a heat spike. A value of 0 indicates no heat spike.'
+
+mhw_mask:
+  dtype: 'int8'
+  description: 'A binary mask indicating if the day is flagged as a MHW given user defined criteria. A value of 1 indicates a marine heatwave. A value of 0 indicates no marine heatwave.'
+
+
+
+

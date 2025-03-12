@@ -1,5 +1,6 @@
 import xarray as xr
 
+from mhwpype.core import assign_static_attributes
 
 def assign_depth(ds: xr.Dataset, depth: float) -> xr.Dataset:
     """
@@ -11,12 +12,8 @@ def assign_depth(ds: xr.Dataset, depth: float) -> xr.Dataset:
     :return: The dataset with a depth coordinate.
     """
     ds = ds.expand_dims({'depth': [depth]})
-    ds['depth'].attrs['short_name'] = 'depth'
-    ds['depth'].attrs['long_name'] = 'depth'
-    ds['depth'].attrs['units'] = 'meters'
-    ds['depth'].attrs['units_abbreviation'] = 'm'
-    ds['depth'].attrs['positive_direction'] = 'down'
-    ds['depth'].attrs['axis'] = 'Z'
+    
+    ds['depth'] = assign_static_attributes(ds.depth)
     return ds
 
 
@@ -33,24 +30,42 @@ def assign_location(ds: xr.Dataset, latitude: float, longitude: float) -> xr.Dat
     :return: The dataset with latitude and longitude coordinates.
     """
 
-    ds = ds.expand_dims({'latitude': [latitude], 'longitude': [longitude]})
-
+    if 'latitude' not in ds.coords or 'lat' not in ds.coords:
+        ds = ds.expand_dims({'latitude': [latitude]})
+    if 'longitude' not in ds.coords or 'lon' not in ds.coords:
+        ds = ds.expand_dims({'longitude': [longitude]})
     return ds
 
 
-def reformat_longitude(ds: xr.Dataset) -> xr.Dataset:
-    ds['longitude'] = ((ds.longitude + 180) % 360) - 180  # Convert longitude from [0 to 360] to [-180 to 180].
-    ds = ds.sortby(['time', 'latitude', 'longitude'])
-    ds['longitude'].attrs['units'] = 'degrees_east'
-    ds['longitude'].attrs['units_abbreviation'] = 'E'
-    ds['longitude'].attrs['range'] = [-180,180]
-    ds['longitude'].attrs['actual_range'] = [float(ds['longitude'].min()), float(ds['longitude'].max())]
-    return ds
+def reformat_longitude(da: xr.DataArray) -> xr.DataArray:
+    """
+    Reformat the longitude values to be between -180 and 180 degrees.
+    :param da: The input longitude DataArray.
+    :return: Longitude reformatted.
+    """
+
+    longitude = ((da + 180) % 360) - 180
+
+    # Update attributes.
+    longitude.name = 'longitude'
+    longitude = assign_static_attributes(longitude)
+    longitude.attrs['actual_range'] = [float(longitude.min()), float(longitude.max())]
+    return longitude
 
 
 def update_names(ds: xr.Dataset,
                  coord_mapper: dict = {'lat': 'latitude','lon': 'longitude'},
                  var_mapper: dict = {'sst': 'sea_water_temperature'}) -> xr.Dataset:
+    """
+    Rename dataset coordinates and variables based on a mapping dictionary.
+    :param ds: The input dataset.
+    :param coord_mapper: Coordinates/dimensions to rename in the dictionary format {old_name: new_name}.
+    :param var_mapper: Variables to rename in the dictionary format {old_name: new_name}.
+    :return:
+    """
+
+    # I don't know why I split coords and variables. Could probably be compressed.
+
     for old_coord, new_coord in coord_mapper.items():
         if old_coord in ds.coords:
             ds = ds.rename({old_coord: new_coord})
